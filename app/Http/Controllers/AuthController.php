@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Pemerintahan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,8 +54,12 @@ class AuthController extends Controller
                 $user->company()->create(['company_name' => $data['company_name']]);
             } elseif ($user->role === 'job_seeker') {
               $user->jobSeekerProfile()->create([]);
+            } elseif ($user->role === 'government') {
+                Pemerintahan::create([
+                    'user_id'       => $user->id, // Relasi ke tabel users
+                    'nama_instansi' => $data['government_name'],
+                ]);
             }
-
             return $user;
         });
 
@@ -110,5 +115,7 @@ class AuthController extends Controller
             default => 'job-seeker.dashboard',
         };
     }
+
+    
 
 }
