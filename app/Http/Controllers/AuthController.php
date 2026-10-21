@@ -35,8 +35,9 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)],
-            'role' => ['required', Rule::in(['job_seeker', 'company'])],
+            'role' => ['required', Rule::in(['job_seeker', 'company', 'government'])],
             'company_name' => ['required_if:role,company', 'nullable', 'string', 'max:255'],
+            'government_name' => ['required_if:role,government', 'nullable', 'string', 'max:255'],
         ]);
 
         $user = DB::transaction(function () use ($data) {
@@ -45,12 +46,13 @@ class AuthController extends Controller
                 'email' => $data['email'],
                 'password' => $data['password'],
                 'role' => $data['role'],
+                'government_name' => $data['government_name'] ?? null,
             ]);
 
             if ($user->role === 'company') {
                 $user->company()->create(['company_name' => $data['company_name']]);
-            } else {
-                $user->jobSeekerProfile()->create([]);
+            } elseif ($user->role === 'job_seeker') {
+              $user->jobSeekerProfile()->create([]);
             }
 
             return $user;
@@ -104,7 +106,9 @@ class AuthController extends Controller
         return match ($user->role) {
             'company' => 'company.dashboard',
             'admin' => 'admin.dashboard',
+            'government' => 'government.dashboard',
             default => 'job-seeker.dashboard',
         };
     }
+
 }

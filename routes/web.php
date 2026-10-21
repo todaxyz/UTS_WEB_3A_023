@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\JobSeekerController;
 use App\Http\Controllers\JobSeekerProfileController;
+use App\Http\Controllers\GovernmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'start'])->name('home');
@@ -102,4 +103,17 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::get('/profile', [AdminController::class, 'profile'])
             ->name('profile');
+    });
+
+Route::middleware(['auth', 'role:government'])
+    ->prefix('government')
+    ->name('government.')
+    ->group(function () {
+        
+        Route::get('/dashboard', [GovernmentController::class, 'dashboard'])
+            ->name('dashboard');
+            
+        Route::put('/profile', [GovernmentController::class, 'updateProfile'])->name('profile.update');
+        Route::delete('/account', [GovernmentController::class, 'deleteAccount'])->name('account.delete');
+        
     });

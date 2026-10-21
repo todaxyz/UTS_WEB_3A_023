@@ -21,8 +21,28 @@
                         <input type="radio" name="role" value="company" {{ old('role') === 'company' ? 'checked' : '' }}>
                         Perusahaan
                     </label>
+                        <label class="role-card">
+                        <input type="radio" name="role" value="government" {{ old('role') === 'government' ? 'checked' : '' }}>
+                        Instansi Pemerintah
+                    </label>
                 </div>
                 @error('role')
+                    <div class="field-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group @error('company_name') has-error @enderror" id="company-name-group" style="display: none;">
+                <label for="company_name">Nama Perusahaan</label>
+                <input type="text" id="company_name" name="company_name" value="{{ old('company_name') }}">
+                @error('company_name')
+                    <div class="field-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group @error('government_name') has-error @enderror" id="government-name-group" style="display: none;">
+                <label for="government_name">Nama Instansi Pemerintahan</label>
+                <input type="text" id="government_name" name="government_name" value="{{ old('government_name') }}">
+                @error('government_name')
                     <div class="field-error">{{ $message }}</div>
                 @enderror
             </div>
@@ -35,13 +55,7 @@
                 @enderror
             </div>
 
-            <div class="form-group @error('company_name') has-error @enderror" id="company-name-group" style="display: none;">
-                <label for="company_name">Nama Perusahaan</label>
-                <input type="text" id="company_name" name="company_name" value="{{ old('company_name') }}">
-                @error('company_name')
-                    <div class="field-error">{{ $message }}</div>
-                @enderror
-            </div>
+
 
             <div class="form-group @error('email') has-error @enderror">
                 <label for="email">Email</label>
@@ -87,4 +101,20 @@
         });
         toggleCompanyField();
     </script>
+
+    <script>
+        // Tampilkan kolom "Nama Pemerintahan" hanya jika memilih role Pemerintah
+        const governmentGroup = document.getElementById('government-name-group');
+
+        function toggleGovernmentField() {
+            const selected = document.querySelector('input[name="role"]:checked');
+            governmentGroup.style.display = selected && selected.value === 'government' ? 'block' : 'none';
+        }
+
+        roleInputs.forEach(function (input) {
+            input.addEventListener('change', toggleGovernmentField);
+        });
+        toggleGovernmentField();
+    </script>
 @endpush
+
